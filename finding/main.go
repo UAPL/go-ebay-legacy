@@ -1,11 +1,11 @@
 package finding
 
 import (
-	"net/http"
 	"bytes"
-	"errors"
 	"encoding/xml"
+	"errors"
 	"io/ioutil"
+	"net/http"
 )
 
 const (
@@ -14,7 +14,7 @@ const (
 
 type FindingApi struct {
 	applicationId string
-	httpClient *http.Client
+	httpClient    *http.Client
 }
 
 func New(application_id string) *FindingApi {
@@ -24,7 +24,7 @@ func New(application_id string) *FindingApi {
 	return &e
 }
 
-func (f *FindingApi) SetHttpClient( httpClient *http.Client ) {
+func (f *FindingApi) SetHttpClient(httpClient *http.Client) {
 	f.httpClient = httpClient
 }
 

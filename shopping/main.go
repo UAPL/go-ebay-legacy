@@ -1,11 +1,11 @@
 package shopping
 
 import (
-	"net/http"
 	"bytes"
 	"encoding/xml"
 	"errors"
 	"io/ioutil"
+	"net/http"
 )
 
 const (

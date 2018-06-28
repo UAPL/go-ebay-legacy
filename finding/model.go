@@ -68,7 +68,6 @@ type AspectValue struct {
 	Count int    `xml:"xml:count"`
 }
 
-
 type AspectFilterInput struct {
 	Name   string   `xml:"aspectName"`
 	Values []string `xml:"aspectValueName"`

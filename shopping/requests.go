@@ -17,8 +17,8 @@ const (
 )
 
 type AffiliateParams struct {
-	TrackingId string
-	PartnerCode string
+	TrackingId      string
+	PartnerCode     string
 	AffiliateUserId string
 }
 
