@@ -18,10 +18,10 @@ type FindingApi struct {
 }
 
 func New(application_id string) *FindingApi {
-	e := FindingApi{}
+	e := new(FindingApi)
 	e.applicationId = application_id
 	e.httpClient = http.DefaultClient
-	return &e
+	return e
 }
 
 func (f *FindingApi) SetHttpClient(httpClient *http.Client) {
