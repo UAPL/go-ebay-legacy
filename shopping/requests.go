@@ -3,7 +3,6 @@ package shopping
 import (
 	"encoding/xml"
 	"errors"
-	"github.com/datainq/xml-date-time"
 )
 
 type AckCode string
@@ -54,58 +53,61 @@ type ErrorParameter struct {
 }
 
 type Error struct {
-	ErrorCode           string           `xml:"ErrorCode"`
-	ShortMessage        string           `xml:"ShortMessage"`
-	LongMessage         string           `xml:"LongMessage"`
-	SeverityCode        string           `xml:"SeverityCode"`
-	ErrorParameters     []ErrorParameter `xml:"ErrorParameters"`
-	ErrorClassification string           `xml:"ErrorClassification"`
+	ErrorCode           string           `xml:"ErrorCode,omitempty"`
+	ShortMessage        string           `xml:"ShortMessage,omitempty"`
+	LongMessage         string           `xml:"LongMessage,omitempty"`
+	SeverityCode        string           `xml:"SeverityCode,omitempty"`
+	ErrorParameters     []ErrorParameter `xml:"ErrorParameters,omitempty"`
+	ErrorClassification string           `xml:"ErrorClassification,omitempty"`
+}
+
+type BaseRequest struct {
 }
 
 type BaseShoppingResponse struct {
-	Timestamp     xmldatetime.CustomTime `xml:"Timestamp"`
-	Ack           Ack                    `xml:"Ack"`
-	Build         string                 `xml:"Build"`
-	CorrelationID string                 `xml:"CorrelationID"`
+	Timestamp     string `xml:"Timestamp"`
+	Ack           Ack    `xml:"Ack"`
+	Build         string `xml:"Build"`
+	Errors        Error  `xml:"Errors"`
+	Version       string `xml:"Version"`
+	CorrelationID string `xml:"CorrelationID"`
 }
 
 type GetMultipleItemsRequest struct {
-	XmlName         xml.Name `xml:"GetMultipleItemsRequest"`
-	IncludeSelector string   `xml:"IncludeSelector"`
-	ItemIds         []string `xml:"ItemID"`
+	IncludeSelector string   `xml:"IncludeSelector,omitempty"`
+	ItemIds         []string `xml:"ItemID,omitempty"`
 }
 
 type GetMultipleItemsResponse struct {
 	*BaseShoppingResponse
-	XmlName xml.Name     `xml:"GetMultipleItemsResponse"`
-	Items   []ItemDetail `xml:"Item"`
+	XmlName xml.Name `xml:"GetMultipleItemsResponse"`
+	Items   []Item   `xml:"Item"`
 }
 
 type GetSingleItemRequest struct {
-	XmlName         xml.Name `xml:"GetSingleItemRequest"`
-	IncludeSelector string   `xml:"IncludeSelector"`
-	ItemId          string   `xml:"ItemID"`
-	MessageID       string   `xml:"MessageID"`
+	IncludeSelector string `xml:"IncludeSelector,omitempty"`
+	ItemId          string `xml:"ItemID,omitempty"`
+	MessageID       string `xml:"MessageID,omitempty"`
 }
 
 type GetSingleItemResponse struct {
 	*BaseShoppingResponse
-	XmlName xml.Name `xml:"GetSingleItemResponse"`
-	Items   []ItemDetail
+	XmlName xml.Name `xml:"urn:ebay:apis:eBLBaseComponents GetSingleItemResponse"`
+	Item    Item     `xml:"Item"`
 }
 
 type GetCategoryInfoRequest struct {
-	XmlName         xml.Name `xml:"GetCategoryInfoRequest"`
-	CategoryID      string   `xml:"CategoryID"`
-	IncludeSelector string   `xml:"IncludeSelector"`
-	MessageID       string   `xml:"MessageID"`
+	XMLName         xml.Name `xml:"urn:ebay:apis:eBLBaseComponents GetCategoryInfoRequest"`
+	CategoryID      string   `xml:"CategoryID,omitempty"`
+	IncludeSelector string   `xml:"IncludeSelector,omitempty"`
+	MessageID       string   `xml:"MessageID,omitempty"`
 }
 
 type GetCategoryInfoResponse struct {
 	*BaseShoppingResponse
-	XmlName         xml.Name               `xml:"GetCategoryInfoResponse"`
-	Categories      []Category             `xml:"CategoryArray>Category"`
-	CategoryCount   int                    `xml:"CategoryCount"`
-	CategoryVersion string                 `xml:"CategoryVersion"`
-	UpdateTime      xmldatetime.CustomTime `xml:"UpdateTime"`
+	XmlName         xml.Name   `xml:"urn:ebay:apis:eBLBaseComponents GetCategoryInfoResponse"`
+	Categories      []Category `xml:"CategoryArray>Category,omitempty"`
+	CategoryCount   int        `xml:"CategoryCount,omitempty"`
+	CategoryVersion string     `xml:"CategoryVersion,omitempty"`
+	UpdateTime      string     `xml:"UpdateTime,omitempty"`
 }

@@ -3,7 +3,6 @@ package finding
 import (
 	"net/http"
 	"testing"
-	"go/types"
 )
 
 var (
@@ -15,12 +14,12 @@ type HttpRequester interface {
 }
 
 func TestFindingApi_FindItemsAdvanced(t *testing.T) {
-	var aff = Affiliate{CustomId:"test-custom-id", TrackingId:"test-tracking-id", NetworkId: "test-network-id"}
+	var aff = Affiliate{CustomId: "test-custom-id", TrackingId:"test-tracking-id", NetworkId: "test-network-id"}
 	//var finding = New(applicationId)
 
 	var request = FindItemsAdvancedRequest{}
 	request.Affiliate = aff
-	request.Pagination = Pagination{Page:5, PerPage:10}
+	request.Pagination = Pagination{Page: 5, PerPage:10}
 	request.Keywords = "test keywords"
 	request.Categories = append(request.Categories, 123)
 	request.Categories = append(request.Categories, 456)

@@ -3,7 +3,6 @@ package finding
 import (
 	"encoding/xml"
 	"errors"
-	"github.com/datainq/xml-date-time"
 )
 
 type AckCode string
@@ -43,49 +42,52 @@ func (c *Ack) UnmarshalXML(d *xml.Decoder, start xml.StartElement) error {
 }
 
 type Pagination struct {
-	Page         uint16 `xml:"pageNumber"`
-	PerPage      uint16 `xml:"entriesPerPage"`
-	TotalPages   uint16 `xml:"totalPages"`
-	TotalEntries uint16 `xml:"totalEntries"`
+	Page         int `xml:"pageNumber,omitempty"`
+	PerPage      int `xml:"entriesPerPage,omitempty"`
+	TotalPages   int `xml:"totalPages,omitempty"`
+	TotalEntries int `xml:"totalEntries,omitempty"`
 }
 
 type Error struct {
-	ErrorId   string `xml:"errorId"`
-	Domain    string `xml:"domain"`
-	Severity  string `xml:"severity"`
-	Category  string `xml:"category"`
-	Message   string `xml:"message"`
-	SubDomain string `xml:"subdomain"`
+	ErrorId   string `xml:"errorId,omitempty"`
+	Domain    string `xml:"domain,omitempty"`
+	Severity  string `xml:"severity,omitempty"`
+	Category  string `xml:"category,omitempty"`
+	Message   string `xml:"message,omitempty"`
+	SubDomain string `xml:"subdomain,omitempty"`
 }
 
 type BaseRequest struct {
-	Affiliate  Affiliate  `xml:"affiliate"`
-	Pagination Pagination `xml:"paginationInput"`
-	SortOrder  string     `xml:"sortOrder"`
+	Affiliate  Affiliate  `xml:"affiliate,omitempty"`
+	Pagination Pagination `xml:"paginationInput,omitempty"`
+	SortOrder  string     `xml:"sortOrder,omitempty"`
 }
 
 type BaseResponse struct {
-	Ack        Ack                    `xml:"ack"`
-	Errors     []Error                `xml:"errorMessage>error"`
-	Pagination Pagination             `xml:"paginationOutput"`
-	Timestamp  xmldatetime.CustomTime `xml:"timestamp"`
-	Version    string                 `xml:"version"`
+	Ack        Ack        `xml:"ack,omitempty"`
+	Errors     []Error    `xml:"errorMessage>error,omitempty"`
+	Pagination Pagination `xml:"paginationOutput,omitempty"`
+	Timestamp  EbayTime   `xml:"timestamp,omitempty"`
+	Version    string     `xml:"version,omitempty"`
 }
 
 type FindItemsAdvancedRequest struct {
 	*BaseRequest
-	XmlName           xml.Name            `xml:"findItemsAdvancedRequest"`
-	AspectFilters     []AspectFilterInput `xml:"aspectFilter"`
-	Keywords          string              `xml:"keywords"`
-	Categories        []int               `xml:"categoryId"`
-	DescriptionSearch bool                `xml:"descriptionSearch"`
-	BuyerPostalCode   string              `xml:"buyerPostalCode"`
-	OutputSelectors   []string            `xml:"outputSelector"`
+
+	XMLName           xml.Name            `xml:"http://www.ebay.com/marketplace/search/v1/services findItemsAdvancedRequest"`
+	ItemFilters		  []ItemFilterInput   `xml:"itemFilter,omitempty"`
+	AspectFilters     []AspectFilterInput `xml:"aspectFilter,omitempty"`
+	Keywords          string              `xml:"keywords,omitempty"`
+	Categories        []int               `xml:"categoryId,omitempty"`
+	DescriptionSearch bool                `xml:"descriptionSearch,omitempty"`
+	BuyerPostalCode   string              `xml:"buyerPostalCode,omitempty"`
+	OutputSelectors   []string            `xml:"outputSelector,omitempty"`
 }
 
 type FindItemsAdvancedResponse struct {
 	*BaseResponse
-	XmlName            xml.Name             `xml:"findItemsAdvancedResponse"`
+
+	XMLName            xml.Name             `xml:"findItemsAdvancedResponse" json:"ignore"`
 	Items              []Item               `xml:"searchResult>item"`
 	Aspects            []Aspect             `xml:"aspectHistogramContainer>aspect"`
 	CategoryHistogram  []CategoryHistogram  `xml:"categoryHistogramContainer>categoryHistogram"`
@@ -94,6 +96,6 @@ type FindItemsAdvancedResponse struct {
 
 type FindItemsByKeywordResponse struct {
 	*BaseResponse
-	XmlName xml.Name `xml:"findItemsByKeywordsResponse"`
+	XMLName xml.Name `xml:"findItemsByKeywordsResponse" json:"ignore"`
 	Items   []Item   `xml:"searchResult>item"`
 }
