@@ -16,7 +16,7 @@ const (
 
 type Api interface {
 	FindItemsAdvanced(req *FindItemsAdvancedRequest) (FindItemsAdvancedResponse, error)
-	GetHistogramsResponse(req *GetHistogramsRequest) (GetHistogramsResponse, error)
+	GetHistograms(req *GetHistogramsRequest) (GetHistogramsResponse, error)
 }
 
 type Client struct {
@@ -66,7 +66,7 @@ func (f *Client) FindItemsAdvanced(req *FindItemsAdvancedRequest) (FindItemsAdva
 	return response, nil
 }
 
-func (f *Client) GetHistogramsResponse(req *GetHistogramsRequest) (GetHistogramsResponse, error) {
+func (f *Client) GetHistograms(req *GetHistogramsRequest) (GetHistogramsResponse, error) {
 	var response GetHistogramsResponse
 
 	b, err := xml.Marshal(req)
