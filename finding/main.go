@@ -16,6 +16,7 @@ const (
 
 type Api interface {
 	FindItemsAdvanced(req *FindItemsAdvancedRequest) (FindItemsAdvancedResponse, error)
+	GetHistogramsResponse(req *GetHistogramsRequest) (GetHistogramsResponse, error)
 }
 
 type Client struct {
@@ -55,6 +56,35 @@ func (f *Client) FindItemsAdvanced(req *FindItemsAdvancedRequest) (FindItemsAdva
 	body, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
 		return response, errors.New("error reading findItemsAdvanced response: " + err.Error())
+	}
+
+	err = xml.Unmarshal(body, &response)
+	if err != nil {
+		return response, errors.New(fmt.Sprintf("error deserializing response: %v, %s", err, string(body)))
+	}
+
+	return response, nil
+}
+
+func (f *Client) GetHistogramsResponse(req *GetHistogramsRequest) (GetHistogramsResponse, error) {
+	var response GetHistogramsResponse
+
+	b, err := xml.Marshal(req)
+	if err != nil {
+		return response, err
+	}
+
+	x := xml.Header + string(b)
+
+	resp, err := f.doFindingServiceRequest([]byte(x), "getHistogramsResponse")
+	if err != nil {
+		return response, errors.New("error making getHistogramsResponse request: " + err.Error())
+	}
+
+	defer resp.Body.Close()
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return response, errors.New("error reading getHistogramsResponse response: " + err.Error())
 	}
 
 	err = xml.Unmarshal(body, &response)

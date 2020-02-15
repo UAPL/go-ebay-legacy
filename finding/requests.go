@@ -21,7 +21,7 @@ type Ack struct {
 
 func (c *Ack) UnmarshalXML(d *xml.Decoder, start xml.StartElement) error {
 	var v string
-	d.DecodeElement(&v, &start)
+	_ = d.DecodeElement(&v, &start)
 
 	switch v {
 	case "Failure":
@@ -75,7 +75,7 @@ type FindItemsAdvancedRequest struct {
 	*BaseRequest
 
 	XMLName           xml.Name            `xml:"http://www.ebay.com/marketplace/search/v1/services findItemsAdvancedRequest"`
-	ItemFilters		  []ItemFilterInput   `xml:"itemFilter,omitempty"`
+	ItemFilters       []ItemFilterInput   `xml:"itemFilter,omitempty"`
 	AspectFilters     []AspectFilterInput `xml:"aspectFilter,omitempty"`
 	Keywords          string              `xml:"keywords,omitempty"`
 	Categories        []int               `xml:"categoryId,omitempty"`
@@ -98,4 +98,18 @@ type FindItemsByKeywordResponse struct {
 	*BaseResponse
 	XMLName xml.Name `xml:"findItemsByKeywordsResponse" json:"ignore"`
 	Items   []Item   `xml:"searchResult>item"`
+}
+
+type GetHistogramsRequest struct {
+	XMLName xml.Name `xml:"http://www.ebay.com/marketplace/search/v1/services getHistogramsRequest"`
+
+	CategoryId int `xml:"categoryId"`
+}
+
+type GetHistogramsResponse struct {
+	*BaseResponse
+
+	XMLName           xml.Name            `xml:"getHistogramsResponse" json:"ignore"`
+	CategoryHistogram []CategoryHistogram `xml:"categoryHistogramContainer>categoryHistogram"`
+	Aspects           []Aspect            `xml:"aspectHistogramContainer>aspect"`
 }
