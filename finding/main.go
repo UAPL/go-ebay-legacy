@@ -76,15 +76,15 @@ func (f *Client) GetHistograms(req *GetHistogramsRequest) (GetHistogramsResponse
 
 	x := xml.Header + string(b)
 
-	resp, err := f.doFindingServiceRequest([]byte(x), "getHistogramsResponse")
+	resp, err := f.doFindingServiceRequest([]byte(x), "getHistograms")
 	if err != nil {
-		return response, errors.New("error making getHistogramsResponse request: " + err.Error())
+		return response, errors.New("error making getHistograms request: " + err.Error())
 	}
 
 	defer resp.Body.Close()
 	body, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
-		return response, errors.New("error reading getHistogramsResponse response: " + err.Error())
+		return response, errors.New("error reading getHistograms response: " + err.Error())
 	}
 
 	err = xml.Unmarshal(body, &response)
