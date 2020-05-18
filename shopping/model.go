@@ -66,7 +66,7 @@ type SimpleItem struct {
 	PaymentAllowedSite                  SiteCode                  `xml:"PaymentAllowedSite"`
 	PaymentMethods                      []BuyerPaymentMethodCode  `xml:"PaymentMethods"`
 	PictureExists                       bool                      `xml:"PictureExists"`
-	PictureURL                          string                    `xml:"PictureURL"`
+	PictureURLs                         []string                  `xml:"PictureURL"`
 	PostalCode                          string                    `xml:"PostalCode"`
 	PrimaryCategoryID                   string                    `xml:"PrimaryCategoryID"`
 	PrimaryCategoryIDPath               string                    `xml:"PrimaryCategoryIDPath"`
