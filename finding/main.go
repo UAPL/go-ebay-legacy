@@ -10,8 +10,8 @@ import (
 	"net/url"
 )
 
-const (
-	findingServiceUrl = "https://svcs.ebay.com/services/search/FindingService/v1"
+var (
+	ServiceUrl = "https://svcs.ebay.com/services/search/FindingService/v1"
 )
 
 type Api interface {
@@ -98,7 +98,7 @@ func (f *Client) GetHistograms(req *GetHistogramsRequest) (GetHistogramsResponse
 func (f *Client) doFindingServiceRequest(b []byte, callName string) (*http.Response, error) {
 	var response http.Response
 
-	request, err := http.NewRequest("POST", findingServiceUrl, bytes.NewBuffer(b))
+	request, err := http.NewRequest("POST", ServiceUrl, bytes.NewBuffer(b))
 	if err != nil {
 		return &response, errors.New("Error creating HTTP request: " + err.Error())
 	}

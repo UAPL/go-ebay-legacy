@@ -3,6 +3,7 @@ package shopping
 import (
 	"encoding/xml"
 	"errors"
+	"net/url"
 )
 
 type AckCode string
@@ -19,6 +20,20 @@ type AffiliateParams struct {
 	TrackingId      string
 	PartnerCode     string
 	AffiliateUserId string
+}
+
+type Request interface {
+	UrlValues() url.Values
+	CallName() string
+}
+
+func (a *AffiliateParams) UrlValues() url.Values {
+	v := url.Values{}
+	v.Set("trackingid", a.TrackingId)
+	v.Set("trackingpartnercode", a.PartnerCode)
+	v.Set("affiliateuserid", a.AffiliateUserId)
+
+	return v
 }
 
 type Ack struct {
@@ -61,9 +76,6 @@ type Error struct {
 	ErrorClassification string           `xml:"ErrorClassification,omitempty"`
 }
 
-type BaseRequest struct {
-}
-
 type BaseShoppingResponse struct {
 	Timestamp     string `xml:"Timestamp"`
 	Ack           Ack    `xml:"Ack"`
@@ -71,43 +83,4 @@ type BaseShoppingResponse struct {
 	Errors        Error  `xml:"Errors"`
 	Version       string `xml:"Version"`
 	CorrelationID string `xml:"CorrelationID"`
-}
-
-type GetMultipleItemsRequest struct {
-	IncludeSelector string   `xml:"IncludeSelector,omitempty"`
-	ItemIds         []string `xml:"ItemID,omitempty"`
-}
-
-type GetMultipleItemsResponse struct {
-	*BaseShoppingResponse
-	XmlName xml.Name `xml:"GetMultipleItemsResponse"`
-	Items   []Item   `xml:"Item"`
-}
-
-type GetSingleItemRequest struct {
-	IncludeSelector string `xml:"IncludeSelector,omitempty"`
-	ItemId          string `xml:"ItemID,omitempty"`
-	MessageID       string `xml:"MessageID,omitempty"`
-}
-
-type GetSingleItemResponse struct {
-	*BaseShoppingResponse
-	XmlName xml.Name `xml:"urn:ebay:apis:eBLBaseComponents GetSingleItemResponse"`
-	Item    Item     `xml:"Item"`
-}
-
-type GetCategoryInfoRequest struct {
-	XMLName         xml.Name `xml:"urn:ebay:apis:eBLBaseComponents GetCategoryInfoRequest"`
-	CategoryID      string   `xml:"CategoryID,omitempty"`
-	IncludeSelector string   `xml:"IncludeSelector,omitempty"`
-	MessageID       string   `xml:"MessageID,omitempty"`
-}
-
-type GetCategoryInfoResponse struct {
-	*BaseShoppingResponse
-	XmlName         xml.Name   `xml:"urn:ebay:apis:eBLBaseComponents GetCategoryInfoResponse"`
-	Categories      []Category `xml:"CategoryArray>Category,omitempty"`
-	CategoryCount   int        `xml:"CategoryCount,omitempty"`
-	CategoryVersion string     `xml:"CategoryVersion,omitempty"`
-	UpdateTime      string     `xml:"UpdateTime,omitempty"`
 }

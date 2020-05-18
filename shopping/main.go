@@ -4,18 +4,20 @@ import (
 	"bytes"
 	"encoding/xml"
 	"errors"
+	"fmt"
 	"io/ioutil"
 	"net/http"
 	"net/url"
 )
 
-const (
-	apiEndpoint               = "http://open.api.ebay.com/shopping"
-	DefaultShoppingApiVersion = "1063"
+var (
+	ApiEndpoint   = "http://open.api.ebay.com/shopping"
+	ApiVersion    = "1063"
+	RequestMethod = "POST"
 )
 
 type Api interface {
-	GetCategoryInfo(req *GetCategoryInfoRequest) (GetCategoryInfoResponse, error)
+	GetCategoryInfo(req *GetCategoryInfoRequest, aff AffiliateParams) (GetCategoryInfoResponse, error)
 	GetSingleItem(req *GetSingleItemRequest, aff AffiliateParams) (GetSingleItemResponse, error)
 	GetMultipleItems(req *GetMultipleItemsRequest, aff AffiliateParams) (GetMultipleItemsResponse, error)
 }
@@ -27,7 +29,6 @@ type Client struct {
 }
 
 var _ Api = &Client{}
-
 
 func New(appId string, version string) *Client {
 	s := Client{}
@@ -41,21 +42,14 @@ func (s *Client) SetHttpClient(httpClient *http.Client) {
 	s.HttpClient = httpClient
 }
 
-func (s *Client) GetCategoryInfo(req *GetCategoryInfoRequest) (GetCategoryInfoResponse, error) {
+func (s *Client) GetCategoryInfo(req *GetCategoryInfoRequest, aff AffiliateParams) (GetCategoryInfoResponse, error) {
 	var resp GetCategoryInfoResponse
+	var httpResp *http.Response
 
-	b, err := xml.MarshalIndent(req, "", "\t")
+	httpResp, err := s.doRequest(req, aff)
 	if err != nil {
-		return resp, errors.New("Error serializing GetCategoryInfoRequest: " + err.Error())
+		return resp, errors.New("error making GetMultipleItems request: " + err.Error())
 	}
-
-	x := xml.Header + string(b)
-
-	httpResp, err := s.doShoppingRequest([]byte(x), "GetCategoryInfo", AffiliateParams{})
-	if err != nil {
-		return resp, err
-	}
-
 	defer httpResp.Body.Close()
 	body, err := ioutil.ReadAll(httpResp.Body)
 
@@ -74,16 +68,9 @@ func (s *Client) GetCategoryInfo(req *GetCategoryInfoRequest) (GetCategoryInfoRe
 func (s *Client) GetSingleItem(req *GetSingleItemRequest, aff AffiliateParams) (GetSingleItemResponse, error) {
 	var resp GetSingleItemResponse
 
-	b, err := xml.Marshal(req)
+	httpResp, err := s.doRequest(req, aff)
 	if err != nil {
-		return resp, errors.New("Error serializing GetSingleItemRequest: " + err.Error())
-	}
-
-	b = bytes.Replace(b, []byte("<GetSingleItemRequest>"), []byte(xml.Header+"<GetSingleItemRequest xmlns=\"urn:ebay:apis:eBLBaseComponents\">"), 1)
-
-	httpResp, err := s.doShoppingRequest(b, "GetSingleItem", aff)
-	if err != nil {
-		return resp, err
+		return resp, errors.New("error making GetMultipleItems request: " + err.Error())
 	}
 
 	defer httpResp.Body.Close()
@@ -103,14 +90,7 @@ func (s *Client) GetSingleItem(req *GetSingleItemRequest, aff AffiliateParams) (
 func (s *Client) GetMultipleItems(req *GetMultipleItemsRequest, aff AffiliateParams) (GetMultipleItemsResponse, error) {
 	var resp GetMultipleItemsResponse
 
-	b, err := xml.Marshal(req)
-	if err != nil {
-		return resp, err
-	}
-
-	b = bytes.Replace(b, []byte("<GetMultipleItemsRequest>"), []byte(xml.Header+"<GetMultipleItemsRequest xmlns=\"urn:ebay:apis:eBLBaseComponents\">"), 1)
-
-	httpResp, err := s.doShoppingRequest(b, "GetMultipleItems", aff)
+	httpResp, err := s.doRequest(req, aff)
 	if err != nil {
 		return resp, errors.New("error making GetMultipleItems request: " + err.Error())
 	}
@@ -129,38 +109,55 @@ func (s *Client) GetMultipleItems(req *GetMultipleItemsRequest, aff AffiliatePar
 	return resp, nil
 }
 
-func (s *Client) doShoppingRequest(b []byte, callName string, aff AffiliateParams) (*http.Response, error) {
+func (s *Client) doRequest(req Request, aff AffiliateParams) (*http.Response, error) {
 	var response http.Response
+	var b []byte
+	var err error
+	var q url.Values
 
-	request, err := http.NewRequest("POST", apiEndpoint, bytes.NewBuffer(b))
+	switch RequestMethod {
+
+	case "POST":
+		q = url.Values{}
+		b, err = xml.Marshal(req)
+		if err != nil {
+			return nil, err
+		}
+
+		b = bytes.Replace(b, []byte(fmt.Sprintf("<%sRequest>", req.CallName())), []byte(fmt.Sprintf("%s<%sRequest xmlns=\"urn:ebay:apis:eBLBaseComponents\">", xml.Header, req.CallName())), 1)
+	case "GET":
+		q = req.UrlValues()
+
+	default:
+		return nil, fmt.Errorf("unsupported http request method: %s", RequestMethod)
+	}
+
+	request, err := http.NewRequest(RequestMethod, ApiEndpoint, bytes.NewBuffer(b))
 	if err != nil {
 		return &response, errors.New("Error creating HTTP request: " + err.Error())
 	}
 
 	request.Header.Set("X-EBAY-API-REQUEST-ENCODING", "XML")
 
-	q := url.Values{}
-
 	//Set standard call parameters
 
-	q.Add("appid", s.ApplicationId)
-	q.Add("callname", callName)
-	q.Add("version", s.Version)
+	q.Set("appid", s.ApplicationId)
+	q.Set("callname", req.CallName())
+	q.Set("version", s.Version)
 
 	//Set affiliate call parameters
 	if aff.TrackingId != "" {
-		q.Add("trackingid", aff.TrackingId)
+		q.Set("trackingid", aff.TrackingId)
 	}
 
 	if aff.PartnerCode != "" {
-		q.Add("trackingpartnercode", aff.PartnerCode)
+		q.Set("trackingpartnercode", aff.PartnerCode)
 	}
 
 	if aff.AffiliateUserId != "" {
-		q.Add("affiliateuserid", aff.AffiliateUserId)
+		q.Set("affiliateuserid", aff.AffiliateUserId)
 	}
 
 	request.URL.RawQuery = q.Encode()
-
 	return s.HttpClient.Do(request)
 }
