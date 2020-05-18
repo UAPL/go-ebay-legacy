@@ -29,5 +29,5 @@ func (r *GetSingleItemRequest) UrlValues() url.Values {
 type GetSingleItemResponse struct {
 	*BaseShoppingResponse
 	XmlName xml.Name `xml:"urn:ebay:apis:eBLBaseComponents GetSingleItemResponse"`
-	Item    Item     `xml:"Item"`
+	Item    SimpleItem     `xml:"Item"`
 }
