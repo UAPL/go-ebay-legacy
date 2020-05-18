@@ -29,6 +29,6 @@ func (r *GetMultipleItemsRequest) UrlValues() url.Values {
 
 type GetMultipleItemsResponse struct {
 	*BaseShoppingResponse
-	XmlName xml.Name `xml:"GetMultipleItemsResponse"`
-	Items   []Item   `xml:"Item"`
+	XmlName xml.Name     `xml:"GetMultipleItemsResponse"`
+	Items   []SimpleItem `xml:"Item"`
 }
