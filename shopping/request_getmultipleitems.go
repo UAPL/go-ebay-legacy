@@ -15,7 +15,7 @@ type GetMultipleItemsRequest struct {
 }
 
 func (r *GetMultipleItemsRequest) CallName() string {
-	panic("GetMultipleItems")
+	return "GetMultipleItems"
 }
 
 func (r *GetMultipleItemsRequest) UrlValues() url.Values {
