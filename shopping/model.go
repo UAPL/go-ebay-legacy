@@ -167,7 +167,7 @@ type SimpleUser struct {
 	UserID                  string                 `xml:"UserID"`
 	AboutMeURL              string                 `xml:"AboutMeURL"`
 	FeedbackDetailsURL      string                 `xml:"FeedbackDetailsURL"`
-	FeedbackPrivate         bool                   `xml:"UserID"`
+	FeedbackPrivate         bool                   `xml:"FeedbackPrivate"`
 	FeedbackRatingStar      FeedbackRatingStarCode `xml:"FeedbackRatingStar"`
 	FeedbackScore           int                    `xml:"FeedbackScore"`
 	MyWorldLargeImage       string                 `xml:"MyWorldLargeImage"`
