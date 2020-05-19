@@ -2,6 +2,8 @@ package shopping
 
 import (
 	"encoding/xml"
+	"errors"
+	"io/ioutil"
 	"net/url"
 	"strings"
 )
@@ -14,11 +16,11 @@ type GetMultipleItemsRequest struct {
 	MessageID       string   `xml:"MessageID,omitempty"`
 }
 
-func (r *GetMultipleItemsRequest) CallName() string {
+func (r GetMultipleItemsRequest) CallName() string {
 	return "GetMultipleItems"
 }
 
-func (r *GetMultipleItemsRequest) UrlValues() url.Values {
+func (r GetMultipleItemsRequest) UrlValues() url.Values {
 	v := url.Values{}
 	v.Set("ItemID", strings.Join(r.ItemIds, ","))
 	v.Set("IncludeSelector", r.IncludeSelector)
@@ -31,4 +33,26 @@ type GetMultipleItemsResponse struct {
 	*BaseShoppingResponse
 	XmlName xml.Name     `xml:"GetMultipleItemsResponse"`
 	Items   []SimpleItem `xml:"Item"`
+}
+
+func (s *Client) GetMultipleItems(req GetMultipleItemsRequest, aff AffiliateParams) (GetMultipleItemsResponse, error) {
+	var resp GetMultipleItemsResponse
+
+	httpResp, err := s.doRequest(req, aff)
+	if err != nil {
+		return resp, errors.New("error making GetMultipleItems request: " + err.Error())
+	}
+
+	defer httpResp.Body.Close()
+	body, err := ioutil.ReadAll(httpResp.Body)
+	if err != nil {
+		return resp, errors.New("error reading GetMultipleItemsResponse: " + err.Error())
+	}
+
+	err = xml.Unmarshal(body, &resp)
+	if err != nil {
+		return resp, errors.New("error deserializing response: " + err.Error())
+	}
+
+	return resp, nil
 }

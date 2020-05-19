@@ -202,14 +202,14 @@ type Charity struct {
 }
 
 type DiscountPriceInfo struct {
-	MinimumAdvertisedPrice         float64                            `xml:"MinimumAdvertisedPrice,omitempty"`
-	MinimumAdvertisedPriceCurrency string                             `xml:"MinimumAdvertisedPriceCurrency>currencyId,attr"`
-	MinimumAdvertisedPriceExposure MinimumAdvertisedPriceExposureCode `xml:"MinimumAdvertisedPriceExposure"`
-	OriginalRetailPrice            float64                            `xml:"OriginalRetailPrice"`
-	OriginalRetailPriceCurrency    float64                            `xml:"OriginalRetailPrice>currencyID,attr"`
-	PricingTreatment               PricingTreatmentCode               `xml:"PricingTreatment"`
-	SoldOffEBay                    bool                               `xml:"SoldOffeBay"`
-	SoldOnEBay                     bool                               `xml:"SoldOneBay"`
+	MinimumAdvertisedPrice         float64              `xml:"MinimumAdvertisedPrice,omitempty"`
+	MinimumAdvertisedPriceCurrency string               `xml:"MinimumAdvertisedPriceCurrency>currencyId,attr"`
+	MinimumAdvertisedPriceExposure MAPExposureCode      `xml:"MinimumAdvertisedPriceExposure"`
+	OriginalRetailPrice            float64              `xml:"OriginalRetailPrice"`
+	OriginalRetailPriceCurrency    float64              `xml:"OriginalRetailPrice>currencyID,attr"`
+	PricingTreatment               PricingTreatmentCode `xml:"PricingTreatment"`
+	SoldOffEBay                    bool                 `xml:"SoldOffeBay"`
+	SoldOnEBay                     bool                 `xml:"SoldOneBay"`
 }
 
 type QuantityInfo struct {

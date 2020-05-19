@@ -27,7 +27,7 @@ type Request interface {
 	CallName() string
 }
 
-func (a *AffiliateParams) UrlValues() url.Values {
+func (a AffiliateParams) UrlValues() url.Values {
 	v := url.Values{}
 	v.Set("trackingid", a.TrackingId)
 	v.Set("trackingpartnercode", a.PartnerCode)
@@ -42,7 +42,7 @@ type Ack struct {
 
 func (c *Ack) UnmarshalXML(d *xml.Decoder, start xml.StartElement) error {
 	var v string
-	d.DecodeElement(&v, &start)
+	_ = d.DecodeElement(&v, &start)
 
 	switch v {
 	case "Failure":
