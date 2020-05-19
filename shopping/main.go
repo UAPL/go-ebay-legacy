@@ -56,7 +56,9 @@ func (s *Client) doRequest(req Request, aff AffiliateParams) (*http.Response, er
 			return nil, err
 		}
 
-		b = bytes.Replace(b, []byte(fmt.Sprintf("<%sRequest>", req.CallName())), []byte(fmt.Sprintf("%s<%sRequest xmlns=\"urn:ebay:apis:eBLBaseComponents\">", xml.Header, req.CallName())), 1)
+		//fix the XML header and namespacing errors
+		b = bytes.Replace(b, []byte(fmt.Sprintf("<%sRequest>", req.CallName())), []byte(fmt.Sprintf("<%sRequest xmlns=\"urn:ebay:apis:eBLBaseComponents\">", req.CallName())), 1)
+		b = append([]byte(xml.Header), b...)
 	case "GET":
 		q = req.UrlValues()
 
