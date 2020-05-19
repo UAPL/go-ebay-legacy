@@ -51,7 +51,7 @@ func (d *Duration) UnmarshalXML(xd *xml.Decoder, start xml.StartElement) error {
 }
 
 type Time struct {
-	*time.Time
+	time.Time
 }
 
 func (c Time) Parse(s string) (time.Time, error) {
@@ -65,7 +65,7 @@ func (c *Time) UnmarshalXML(d *xml.Decoder, start xml.StartElement) error {
 	if err != nil {
 		return err
 	}
-	c.Time = &t
+	c.Time = t
 	return nil
 }
 
