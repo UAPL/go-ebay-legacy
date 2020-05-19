@@ -29,6 +29,11 @@ func (d *Duration) UnmarshalXML(xd *xml.Decoder, start xml.StartElement) error {
 	var v interface{}
 	_ = xd.DecodeElement(&v, &start)
 
+	if v == nil {
+		//do nothing
+		return nil
+	}
+
 	switch value := v.(type) {
 	case float64:
 		d.Duration = time.Duration(value)
