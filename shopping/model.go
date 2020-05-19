@@ -1,10 +1,22 @@
 package shopping
 
-import "time"
+import (
+	"fmt"
+	"time"
+)
 
 type NameValueList struct {
 	Name  string   `xml:"Name"`
 	Value []string `xml:"Value"`
+}
+
+type Amount struct {
+	Value    float64 `xml:",chardata"`
+	Currency string  `xml:"currencyID,attr"`
+}
+
+func (a Amount) String() string {
+	return fmt.Sprintf("%0.2f", a.Value)
 }
 
 type Seller struct {
@@ -22,17 +34,15 @@ type SimpleItem struct {
 	BidCount                            int                       `xml:"BidCount"`
 	BusinessSellerDetails               BusinessSellerDetails     `xml:"BusinessSellerDetails"`
 	BuyItNowAvailable                   bool                      `xml:"BuyItNowAvailable"`
-	BuyItNowPrice                       float64                   `xml:"BuyItNowPrice"`
+	BuyItNowPrice                       Amount                    `xml:"BuyItNowPrice"`
 	Charity                             Charity                   `xml:"Charity"`
 	ConditionDescription                string                    `xml:"ConditionDescription"`
 	ConditionDisplayName                string                    `xml:"ConditionDisplayName"`
 	ConditionID                         int                       `xml:"ConditionID"`
-	ConvertedBuyItNowPrice              float64                   `xml:"ConvertedBuyItNowPrice"`
-	ConvertedCurrentPrice               float64                   `xml:"ConvertedCurrentPrice"`
-	ConvertedCurrentPriceCurrency       string                    `xml:"ConvertedCurrentPrice>currencyID,attr"`
+	ConvertedBuyItNowPrice              Amount                    `xml:"ConvertedBuyItNowPrice"`
+	ConvertedCurrentPrice               Amount                    `xml:"ConvertedCurrentPrice"`
 	Country                             string                    `xml:"Country"`
-	CurrentPrice                        float64                   `xml:"CurrentPrice"`
-	CurrentPriceCurrency                string                    `xml:"CurrentPrice>currencyID,attr"`
+	CurrentPrice                        Amount                    `xml:"CurrentPrice"`
 	Description                         string                    `xml:"Description"`
 	DiscountPriceInfo                   DiscountPriceInfo         `xml:"DiscountPriceInfo"`
 	DistanceFromBuyer                   float64                   `xml:"DistanceFromBuyer"`
@@ -60,8 +70,7 @@ type SimpleItem struct {
 	ListingType                         ListingTypeCode           `xml:"ListingType"`
 	Location                            string                    `xml:"Location"`
 	LotSize                             int                       `xml:"LotSize"`
-	MinimumToBid                        float64                   `xml:"MinimumToBid"`
-	MinimumToBidCurrency                string                    `xml:"MinimumToBid>currencyID,attr"`
+	MinimumToBid                        Amount                    `xml:"MinimumToBid"`
 	NewBestOffer                        bool                      `xml:"NewBestOffer"`
 	PaymentAllowedSite                  SiteCode                  `xml:"PaymentAllowedSite"`
 	PaymentMethods                      []BuyerPaymentMethodCode  `xml:"PaymentMethods"`
@@ -202,11 +211,9 @@ type Charity struct {
 }
 
 type DiscountPriceInfo struct {
-	MinimumAdvertisedPrice         float64              `xml:"MinimumAdvertisedPrice,omitempty"`
-	MinimumAdvertisedPriceCurrency string               `xml:"MinimumAdvertisedPriceCurrency>currencyId,attr"`
+	MinimumAdvertisedPrice         Amount               `xml:"MinimumAdvertisedPrice,omitempty"`
 	MinimumAdvertisedPriceExposure MAPExposureCode      `xml:"MinimumAdvertisedPriceExposure"`
-	OriginalRetailPrice            float64              `xml:"OriginalRetailPrice"`
-	OriginalRetailPriceCurrency    float64              `xml:"OriginalRetailPrice>currencyID,attr"`
+	OriginalRetailPrice            Amount               `xml:"OriginalRetailPrice"`
 	PricingTreatment               PricingTreatmentCode `xml:"PricingTreatment"`
 	SoldOffEBay                    bool                 `xml:"SoldOffeBay"`
 	SoldOnEBay                     bool                 `xml:"SoldOneBay"`
@@ -235,14 +242,12 @@ type ReturnPolicy struct {
 }
 
 type ShippingCostSummary struct {
-	ListedShippingServiceCost         float64          `xml:"ListedShippingServiceCost"`
-	ListedShippingServiceCostCurrency string           `xml:"ListedShippingServiceCost>currencyID,attr"`
-	LocalPickup                       bool             `xml:"LocalPickup"`
-	LogisticPlanType                  string           `xml:"LogisticPlanType"`
-	ShippingServiceCost               float64          `xml:"ShippingServiceCost"`
-	ShippingServiceCostCurrency       string           `xml:"ShippingServiceCostCurrency>currencyID,attr"`
-	ShippingServiceName               string           `xml:"ShippingServiceName"`
-	ShippingType                      ShippingTypeCode `xml:"ShippingType"`
+	ListedShippingServiceCost Amount           `xml:"ListedShippingServiceCost"`
+	LocalPickup               bool             `xml:"LocalPickup"`
+	LogisticPlanType          string           `xml:"LogisticPlanType"`
+	ShippingServiceCost       Amount           `xml:"ShippingServiceCost"`
+	ShippingServiceName       string           `xml:"ShippingServiceName"`
+	ShippingType              ShippingTypeCode `xml:"ShippingType"`
 }
 
 type Storefront struct {
@@ -276,8 +281,7 @@ type Variation struct {
 	QuantitySold       int               `xml:"QuantitySold"`
 	SellingStatus      SellingStatus     `xml:"SellingStatus"`
 	SKU                string            `xml:"SKU"`
-	StartPrice         float64           `xml:"StartPrice"`
-	StartPriceCurrency string            `xml:"StartPriceCurrency"`
+	StartPrice         Amount            `xml:"StartPrice"`
 	VariationSpecifics NameValueList     `xml:"VariationSpecifics"`
 }
 
@@ -300,8 +304,7 @@ type FeedbackDetail struct {
 	FollowUp            string                 `xml:"FollowUp"`
 	FollowUpReplaced    bool                   `xml:"FollowUpReplaced"`
 	ItemID              string                 `xml:"ItemID"`
-	ItemPrice           float64                `xml:"ItemPrice"`
-	ItemPriceCurrency   string                 `xml:"ItemPrice>currencyID,attr"`
+	ItemPrice           Amount                 `xml:"ItemPrice"`
 	ItemTitle           string                 `xml:"ItemTitle"`
 	ResponseReplaced    bool                   `xml:"ResponseReplaced"`
 	Role                TradingRoleCode        `xml:"Role"`
