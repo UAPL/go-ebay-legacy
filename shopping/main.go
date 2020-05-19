@@ -5,7 +5,6 @@ import (
 	"encoding/xml"
 	"errors"
 	"fmt"
-	"io/ioutil"
 	"net/http"
 	"net/url"
 )
@@ -16,97 +15,30 @@ var (
 	RequestMethod = "POST"
 )
 
+var _ Api = &Client{}
+
 type Api interface {
-	GetCategoryInfo(req *GetCategoryInfoRequest, aff AffiliateParams) (GetCategoryInfoResponse, error)
-	GetSingleItem(req *GetSingleItemRequest, aff AffiliateParams) (GetSingleItemResponse, error)
-	GetMultipleItems(req *GetMultipleItemsRequest, aff AffiliateParams) (GetMultipleItemsResponse, error)
+	GetCategoryInfo(req GetCategoryInfoRequest, aff AffiliateParams) (GetCategoryInfoResponse, error)
+	GetSingleItem(req GetSingleItemRequest, aff AffiliateParams) (GetSingleItemResponse, error)
+	GetMultipleItems(req GetMultipleItemsRequest, aff AffiliateParams) (GetMultipleItemsResponse, error)
+	GetUserProfile(req GetUserProfileRequest, aff AffiliateParams) (GetUserProfileResponse, error)
+	GetItemStatus(req GetItemStatusRequest, aff AffiliateParams) (GetItemStatusResponse, error)
 }
 
 type Client struct {
 	ApplicationId string
-	Version       string
 	HttpClient    *http.Client
 }
 
-var _ Api = &Client{}
-
-func New(appId string, version string) *Client {
+func New(appId string) *Client {
 	s := Client{}
 	s.ApplicationId = appId
-	s.Version = version
 	s.HttpClient = http.DefaultClient
 	return &s
 }
 
 func (s *Client) SetHttpClient(httpClient *http.Client) {
 	s.HttpClient = httpClient
-}
-
-func (s *Client) GetCategoryInfo(req *GetCategoryInfoRequest, aff AffiliateParams) (GetCategoryInfoResponse, error) {
-	var resp GetCategoryInfoResponse
-	var httpResp *http.Response
-
-	httpResp, err := s.doRequest(req, aff)
-	if err != nil {
-		return resp, errors.New("error making GetMultipleItems request: " + err.Error())
-	}
-	defer httpResp.Body.Close()
-	body, err := ioutil.ReadAll(httpResp.Body)
-
-	if err != nil {
-		return resp, errors.New("error reading GetCategoryInfoResponse: " + err.Error())
-	}
-
-	err = xml.Unmarshal(body, &resp)
-	if err != nil {
-		return resp, errors.New("error deserializing response: " + err.Error())
-	}
-
-	return resp, nil
-}
-
-func (s *Client) GetSingleItem(req *GetSingleItemRequest, aff AffiliateParams) (GetSingleItemResponse, error) {
-	var resp GetSingleItemResponse
-
-	httpResp, err := s.doRequest(req, aff)
-	if err != nil {
-		return resp, errors.New("error making GetMultipleItems request: " + err.Error())
-	}
-
-	defer httpResp.Body.Close()
-	body, err := ioutil.ReadAll(httpResp.Body)
-	if err != nil {
-		return resp, errors.New("error reading GetSingleItemResponse: " + err.Error())
-	}
-
-	err = xml.Unmarshal(body, &resp)
-	if err != nil {
-		return resp, errors.New("error deserializing response: " + err.Error())
-	}
-
-	return resp, nil
-}
-
-func (s *Client) GetMultipleItems(req *GetMultipleItemsRequest, aff AffiliateParams) (GetMultipleItemsResponse, error) {
-	var resp GetMultipleItemsResponse
-
-	httpResp, err := s.doRequest(req, aff)
-	if err != nil {
-		return resp, errors.New("error making GetMultipleItems request: " + err.Error())
-	}
-
-	defer httpResp.Body.Close()
-	body, err := ioutil.ReadAll(httpResp.Body)
-	if err != nil {
-		return resp, errors.New("error reading GetMultipleItemsResponse: " + err.Error())
-	}
-
-	err = xml.Unmarshal(body, &resp)
-	if err != nil {
-		return resp, errors.New("error deserializing response: " + err.Error())
-	}
-
-	return resp, nil
 }
 
 func (s *Client) doRequest(req Request, aff AffiliateParams) (*http.Response, error) {
@@ -143,7 +75,7 @@ func (s *Client) doRequest(req Request, aff AffiliateParams) (*http.Response, er
 
 	q.Set("appid", s.ApplicationId)
 	q.Set("callname", req.CallName())
-	q.Set("version", s.Version)
+	q.Set("version", ApiVersion)
 
 	//Set affiliate call parameters
 	if aff.TrackingId != "" {
