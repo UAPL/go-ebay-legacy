@@ -1,6 +1,8 @@
 package shopping
 
 import (
+	"encoding/xml"
+	"errors"
 	"fmt"
 	"time"
 )
@@ -13,6 +15,30 @@ type NameValueList struct {
 type Amount struct {
 	Value    float64 `xml:",chardata"`
 	Currency string  `xml:"currencyID,attr"`
+}
+
+type Duration struct {
+	time.Duration
+}
+
+func (d *Duration) UnmarshalXML(xd *xml.Decoder, start xml.StartElement) error {
+	var v interface{}
+	_ = xd.DecodeElement(&v, &start)
+
+	switch value := v.(type) {
+	case float64:
+		d.Duration = time.Duration(value)
+		return nil
+	case string:
+		var err error
+		d.Duration, err = time.ParseDuration(value)
+		if err != nil {
+			return err
+		}
+		return nil
+	default:
+		return errors.New("invalid duration")
+	}
 }
 
 func (a Amount) String() string {
@@ -102,7 +128,7 @@ type SimpleItem struct {
 	StartTime                           time.Time                 `xml:"StartTime"`
 	Storefront                          Storefront                `xml:"Storefront"`
 	Subtitle                            string                    `xml:"Subtitle"`
-	TimeLeft                            time.Duration             `xml:"TimeLeft"`
+	TimeLeft                            Duration                  `xml:"TimeLeft"`
 	Title                               string                    `xml:"Title"`
 	TopRatedListing                     bool                      `xml:"TopRatedListing"`
 	UnitInfo                            UnitInfo                  `xml:"UnitInfo"`
