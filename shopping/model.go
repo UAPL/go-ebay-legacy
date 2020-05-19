@@ -17,6 +17,10 @@ type Amount struct {
 	Currency string  `xml:"currencyID,attr"`
 }
 
+func (a Amount) String() string {
+	return fmt.Sprintf("%0.2f", a.Value)
+}
+
 type Duration struct {
 	time.Duration
 }
@@ -41,8 +45,23 @@ func (d *Duration) UnmarshalXML(xd *xml.Decoder, start xml.StartElement) error {
 	}
 }
 
-func (a Amount) String() string {
-	return fmt.Sprintf("%0.2f", a.Value)
+type Time struct {
+	*time.Time
+}
+
+func (c Time) Parse(s string) (time.Time, error) {
+	return time.Parse(time.RFC3339, s)
+}
+
+func (c *Time) UnmarshalXML(d *xml.Decoder, start xml.StartElement) error {
+	var v string
+	_ = d.DecodeElement(&v, &start)
+	t, err := time.Parse(time.RFC3339, v)
+	if err != nil {
+		return err
+	}
+	c.Time = &t
+	return nil
 }
 
 type Seller struct {
@@ -75,7 +94,7 @@ type SimpleItem struct {
 	EBayNowAvailable                    bool                      `xml:"eBayNowAvailable"`
 	EBayNowEligible                     bool                      `xml:"eBayNowEligible"`
 	EligibleForPickupDropOff            bool                      `xml:"EligibleForPickupDropOff"`
-	EndTime                             time.Time                 `xml:"EndTime"`
+	EndTime                             Time                 `xml:"EndTime"`
 	ExcludeShipToLocation               string                    `xml:"ExcludeShipToLocation"`
 	GalleryURL                          string                    `xml:"GalleryURL"`
 	GermanMotorsSearchable              bool                      `xml:"GermanMotorsSearchable"`
@@ -125,7 +144,7 @@ type SimpleItem struct {
 	ShipToLocations                     string                    `xml:"ShipToLocations"`
 	Site                                SiteCode                  `xml:"Site"`
 	SKU                                 string                    `xml:"SKU"`
-	StartTime                           time.Time                 `xml:"StartTime"`
+	StartTime                           Time                 `xml:"StartTime"`
 	Storefront                          Storefront                `xml:"Storefront"`
 	Subtitle                            string                    `xml:"Subtitle"`
 	TimeLeft                            Duration                  `xml:"TimeLeft"`
@@ -151,7 +170,7 @@ type SimpleUser struct {
 	MyWorldURL              string                 `xml:"MyWorldURL"`
 	NewUser                 bool                   `xml:"NewUser"`
 	PositiveFeedbackPercent float64                `xml:"PositiveFeedbackPercent"`
-	RegistrationDate        time.Time              `xml:"RegistrationDate"`
+	RegistrationDate        Time              `xml:"RegistrationDate"`
 	RegistrationSite        SiteCode               `xml:"RegistrationSite"`
 	ReviewsAndGuidesURL     string                 `xml:"ReviewsAndGuidesURL"`
 	SellerBusinessType      SellerBusinessCode     `xml:"SellerBusinessType"`
@@ -321,7 +340,7 @@ type FeedbackDetail struct {
 	CommentingUserScore int                    `xml:"CommentingUserScore"`
 	CommentReplaced     bool                   `xml:"CommentReplaced"`
 	CommentText         string                 `xml:"CommentText"`
-	CommentTime         time.Time              `xml:"CommentTime"`
+	CommentTime         Time              `xml:"CommentTime"`
 	CommentType         CommentTypeCode        `xml:"CommentType"`
 	Countable           bool                   `xml:"Countable"`
 	FeedbackID          string                 `xml:"FeedbackID"`
