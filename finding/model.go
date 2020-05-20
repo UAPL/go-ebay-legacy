@@ -1,9 +1,6 @@
 package finding
 
-import (
-	"encoding/xml"
-	"time"
-)
+import "github.com/uapl/go-ebay-legacy/ebay"
 
 type ImageSize string
 
@@ -12,29 +9,6 @@ const (
 	MediumImage ImageSize = "Medium"
 	SmallImage  ImageSize = "Small"
 )
-
-type EbayTime struct {
-	*time.Time
-}
-
-func (c EbayTime) Parse(s string) (time.Time, error) {
-	return time.Parse(time.RFC3339, s)
-}
-
-func (c *EbayTime) UnmarshalXML(d *xml.Decoder, start xml.StartElement) error {
-	var v string
-	d.DecodeElement(&v, &start)
-	t, err := time.Parse(time.RFC3339, v)
-	if err != nil {
-		return err
-	}
-	c.Time = &t
-	return nil
-}
-
-func (c *EbayTime) MarshalXML(e *xml.Encoder, start xml.StartElement) error {
-	return e.EncodeElement(c.Time.Format(time.RFC3339Nano), start)
-}
 
 type Seller struct {
 	Username                string  `xml:"sellerUserName"`
@@ -62,8 +36,8 @@ type Item struct {
 	BinPrice        float64         `xml:"listingInfo>buyItNowPrice"`
 	ShipsTo         []string        `xml:"shippingInfo>shipToLocations"`
 	Site            string          `xml:"globalId"`
-	StartTime       EbayTime        `xml:"listingInfo>startTime"`
-	EndTime         EbayTime        `xml:"listingInfo>endTime"`
+	StartTime       ebay.Time       `xml:"listingInfo>startTime"`
+	EndTime         ebay.Time       `xml:"listingInfo>endTime"`
 }
 
 type CategorySummary struct {

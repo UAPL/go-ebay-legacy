@@ -3,6 +3,7 @@ package finding
 import (
 	"encoding/xml"
 	"errors"
+	"github.com/uapl/go-ebay-legacy/ebay"
 )
 
 type AckCode string
@@ -67,7 +68,7 @@ type BaseResponse struct {
 	Ack        Ack        `xml:"ack,omitempty"`
 	Errors     []Error    `xml:"errorMessage>error,omitempty"`
 	Pagination Pagination `xml:"paginationOutput,omitempty"`
-	Timestamp  EbayTime   `xml:"timestamp,omitempty"`
+	Timestamp  ebay.Time  `xml:"timestamp,omitempty"`
 	Version    string     `xml:"version,omitempty"`
 }
 
