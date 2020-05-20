@@ -50,24 +50,7 @@ func (d *Duration) UnmarshalXML(xd *xml.Decoder, start xml.StartElement) error {
 	}
 }
 
-type Time struct {
-	time.Time
-}
 
-func (c Time) Parse(s string) (time.Time, error) {
-	return time.Parse(time.RFC3339, s)
-}
-
-func (c *Time) UnmarshalXML(d *xml.Decoder, start xml.StartElement) error {
-	var v string
-	_ = d.DecodeElement(&v, &start)
-	t, err := time.Parse(time.RFC3339, v)
-	if err != nil {
-		return err
-	}
-	c.Time = t
-	return nil
-}
 
 type Seller struct {
 	UserID                  string  `xml:"UserID"`
