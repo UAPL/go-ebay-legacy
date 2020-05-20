@@ -4,6 +4,7 @@ import (
 	"encoding/xml"
 	"errors"
 	"fmt"
+	"github.com/uapl/go-ebay-legacy/ebay"
 	"time"
 )
 
@@ -82,7 +83,7 @@ type SimpleItem struct {
 	EBayNowAvailable                    bool                      `xml:"eBayNowAvailable"`
 	EBayNowEligible                     bool                      `xml:"eBayNowEligible"`
 	EligibleForPickupDropOff            bool                      `xml:"EligibleForPickupDropOff"`
-	EndTime                             Time                 `xml:"EndTime"`
+	EndTime                             ebay.Time                 `xml:"EndTime"`
 	ExcludeShipToLocation               string                    `xml:"ExcludeShipToLocation"`
 	GalleryURL                          string                    `xml:"GalleryURL"`
 	GermanMotorsSearchable              bool                      `xml:"GermanMotorsSearchable"`
@@ -132,7 +133,7 @@ type SimpleItem struct {
 	ShipToLocations                     string                    `xml:"ShipToLocations"`
 	Site                                SiteCode                  `xml:"Site"`
 	SKU                                 string                    `xml:"SKU"`
-	StartTime                           Time                 `xml:"StartTime"`
+	StartTime                           ebay.Time                 `xml:"StartTime"`
 	Storefront                          Storefront                `xml:"Storefront"`
 	Subtitle                            string                    `xml:"Subtitle"`
 	TimeLeft                            Duration                  `xml:"TimeLeft"`
@@ -158,7 +159,7 @@ type SimpleUser struct {
 	MyWorldURL              string                 `xml:"MyWorldURL"`
 	NewUser                 bool                   `xml:"NewUser"`
 	PositiveFeedbackPercent float64                `xml:"PositiveFeedbackPercent"`
-	RegistrationDate        Time              `xml:"RegistrationDate"`
+	RegistrationDate        ebay.Time              `xml:"RegistrationDate"`
 	RegistrationSite        SiteCode               `xml:"RegistrationSite"`
 	ReviewsAndGuidesURL     string                 `xml:"ReviewsAndGuidesURL"`
 	SellerBusinessType      SellerBusinessCode     `xml:"SellerBusinessType"`
@@ -328,7 +329,7 @@ type FeedbackDetail struct {
 	CommentingUserScore int                    `xml:"CommentingUserScore"`
 	CommentReplaced     bool                   `xml:"CommentReplaced"`
 	CommentText         string                 `xml:"CommentText"`
-	CommentTime         Time              `xml:"CommentTime"`
+	CommentTime         ebay.Time              `xml:"CommentTime"`
 	CommentType         CommentTypeCode        `xml:"CommentType"`
 	Countable           bool                   `xml:"Countable"`
 	FeedbackID          string                 `xml:"FeedbackID"`
