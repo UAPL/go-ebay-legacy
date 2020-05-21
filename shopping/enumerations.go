@@ -566,7 +566,7 @@ const (
 	BuyerPaymentMethodPaymentSeeDescription       BuyerPaymentMethodCodeType = "PaymentSeeDescription"
 	BuyerPaymentMethodPayPal                      BuyerPaymentMethodCodeType = "PayPal"
 	BuyerPaymentMethodPersonalCheck               BuyerPaymentMethodCodeType = "PersonalCheck"
-	BuyerPaymentMethodCodeVisa                    BuyerPaymentMethodCodeType = "Visa"
+	BuyerPaymentMethodCodeVisaMC                  BuyerPaymentMethodCodeType = "VisaMC"
 
 	BuyerPaymentMethodCustomCode BuyerPaymentMethodCodeType = "CustomCode"
 )
@@ -620,8 +620,10 @@ func (c *BuyerPaymentMethodCode) UnmarshalXML(d *xml.Decoder, start xml.StartEle
 		c.Value = BuyerPaymentMethodPayPal
 	case "PersonalCheck":
 		c.Value = BuyerPaymentMethodPersonalCheck
-	case "Visa":
-		c.Value = BuyerPaymentMethodCodeVisa
+	case "VisaMC":
+		c.Value = BuyerPaymentMethodCodeVisaMC
+	case "CustomCode":
+		c.Value = BuyerPaymentMethodCustomCode
 	default:
 		return errors.New("invalid BuyerPaymentMethodCode received")
 	}
