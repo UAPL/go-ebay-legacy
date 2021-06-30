@@ -36,11 +36,16 @@ func New(appId string, a auth.Authenticator) *Client {
 	s := Client{}
 	s.ApplicationId = appId
 	s.httpClient = http.DefaultClient
+	s.authenticator = a
 	return &s
 }
 
 func (s *Client) SetHttpClient(httpClient *http.Client) {
 	s.httpClient = httpClient
+}
+
+func (s *Client) SetAuthenticator(auther auth.Authenticator) {
+	s.authenticator = auther
 }
 
 func (s *Client) doRequest(req Request, aff AffiliateParams) (*http.Response, error) {
@@ -76,7 +81,6 @@ func (s *Client) doRequest(req Request, aff AffiliateParams) (*http.Response, er
 	if err = s.prepareRequestHeaders(request); err != nil {
 		return nil, fmt.Errorf("error setting request headers: %w", err)
 	}
-
 
 	//Set standard call parameters
 
