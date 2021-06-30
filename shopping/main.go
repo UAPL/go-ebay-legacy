@@ -32,7 +32,7 @@ type Client struct {
 	authenticator auth.Authenticator
 }
 
-func New(appId string, a *auth.Authenticator) *Client {
+func New(appId string, a auth.Authenticator) *Client {
 	s := Client{}
 	s.ApplicationId = appId
 	s.httpClient = http.DefaultClient
