@@ -5,6 +5,7 @@ import (
 	"encoding/xml"
 	"errors"
 	"fmt"
+	"github.com/uapl/go-ebay-legacy/auth"
 	"net/http"
 	"net/url"
 )
@@ -27,18 +28,19 @@ type Api interface {
 
 type Client struct {
 	ApplicationId string
-	HttpClient    *http.Client
+	httpClient    *http.Client
+	authenticator auth.Authenticator
 }
 
-func New(appId string) *Client {
+func New(appId string, a *auth.Authenticator) *Client {
 	s := Client{}
 	s.ApplicationId = appId
-	s.HttpClient = http.DefaultClient
+	s.httpClient = http.DefaultClient
 	return &s
 }
 
 func (s *Client) SetHttpClient(httpClient *http.Client) {
-	s.HttpClient = httpClient
+	s.httpClient = httpClient
 }
 
 func (s *Client) doRequest(req Request, aff AffiliateParams) (*http.Response, error) {
@@ -71,7 +73,10 @@ func (s *Client) doRequest(req Request, aff AffiliateParams) (*http.Response, er
 		return &response, errors.New("Error creating HTTP request: " + err.Error())
 	}
 
-	request.Header.Set("X-EBAY-API-REQUEST-ENCODING", "XML")
+	if err = s.prepareRequestHeaders(request); err != nil {
+		return nil, fmt.Errorf("error setting request headers: %w", err)
+	}
+
 
 	//Set standard call parameters
 
@@ -93,5 +98,25 @@ func (s *Client) doRequest(req Request, aff AffiliateParams) (*http.Response, er
 	}
 
 	request.URL.RawQuery = q.Encode()
-	return s.HttpClient.Do(request)
+	return s.httpClient.Do(request)
+}
+
+func (s *Client) prepareRequestHeaders(req *http.Request) error {
+	token, err := s.authenticator.AuthToken()
+	if err != nil {
+		return err
+	}
+
+	req.Header.Set("X-EBAY-API-REQUEST-ENCODING", "XML")
+
+	req.Header.Set("Accept-Charset", "utf-8")
+	req.Header.Set("Accept-Language", "en-US")
+	req.Header.Set("Content-Language", "en-US")
+	req.Header.Set("X-EBAY-C-MARKETPLACE-ID", "EBAY_US") //TODO make marketplace configurable
+
+	if token.AccessToken != "" {
+		req.Header.Set("Authorization", fmt.Sprintf("Bearer %s", token.AccessToken))
+	}
+
+	return nil
 }
