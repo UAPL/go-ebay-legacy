@@ -117,6 +117,8 @@ func (s *Client) prepareRequestHeaders(req *http.Request) error {
 
 	if token.AccessToken != "" {
 		req.Header.Set("Authorization", fmt.Sprintf("Bearer %s", token.AccessToken))
+		//for Traditional APIs, we actually need to use X-EBAY-API-IAF-TOKEN
+		req.Header.Set("X-EBAY-API-IAF-TOKEN", token.AccessToken)
 	}
 
 	return nil
