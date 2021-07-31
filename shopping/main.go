@@ -27,14 +27,12 @@ type Api interface {
 }
 
 type Client struct {
-	ApplicationId string
 	httpClient    *http.Client
 	authenticator auth.Authenticator
 }
 
-func New(appId string, a auth.Authenticator) *Client {
+func New(a auth.Authenticator) *Client {
 	s := Client{}
-	s.ApplicationId = appId
 	s.httpClient = http.DefaultClient
 	s.authenticator = a
 	return &s
@@ -84,7 +82,6 @@ func (s *Client) doRequest(req Request, aff AffiliateParams) (*http.Response, er
 
 	//Set standard call parameters
 
-	q.Set("appid", s.ApplicationId)
 	q.Set("callname", req.CallName())
 	q.Set("version", ApiVersion)
 
