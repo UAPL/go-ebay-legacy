@@ -2,7 +2,7 @@ package shopping
 
 import (
 	"encoding/xml"
-	"errors"
+	"fmt"
 	"io/ioutil"
 	"net/http"
 	"net/url"
