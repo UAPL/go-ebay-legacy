@@ -2,7 +2,6 @@ package shopping
 
 import (
 	"encoding/xml"
-	"errors"
 	"fmt"
 	"github.com/uapl/go-ebay-legacy/ebay"
 	"time"
@@ -47,7 +46,7 @@ func (d *Duration) UnmarshalXML(xd *xml.Decoder, start xml.StartElement) error {
 		}
 		return nil
 	default:
-		return errors.New("invalid duration")
+		return fmt.Errorf("invalid duration: %s", value)
 	}
 }
 

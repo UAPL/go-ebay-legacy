@@ -39,18 +39,18 @@ func (s *Client) GetItemStatus(req GetItemStatusRequest, aff AffiliateParams) (G
 
 	httpResp, err := s.doRequest(req, aff)
 	if err != nil {
-		return resp, errors.New("error making GetItemStatus request: " + err.Error())
+		return resp, fmt.Errorf("error making GetItemStatus request:  %w", err)
 	}
 	defer httpResp.Body.Close()
 	body, err := ioutil.ReadAll(httpResp.Body)
 
 	if err != nil {
-		return resp, errors.New("error reading GetItemStatus http response: " + err.Error())
+		return resp, fmt.Errorf("error reading GetItemStatus http response:  %w", err)
 	}
 
 	err = xml.Unmarshal(body, &resp)
 	if err != nil {
-		return resp, errors.New("error deserializing GetItemStatusResponse: " + err.Error())
+		return resp, fmt.Errorf("error deserializing GetItemStatusResponse:  %w", err)
 	}
 
 	return resp, nil

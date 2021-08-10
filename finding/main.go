@@ -3,7 +3,6 @@ package finding
 import (
 	"bytes"
 	"encoding/xml"
-	"errors"
 	"fmt"
 	"io/ioutil"
 	"net/http"
@@ -26,9 +25,9 @@ type Client struct {
 
 var _ Api = &Client{}
 
-func New(application_id string) *Client {
+func New(applicationId string) *Client {
 	e := new(Client)
-	e.applicationId = application_id
+	e.applicationId = applicationId
 	e.httpClient = http.DefaultClient
 	return e
 }
@@ -49,18 +48,18 @@ func (f *Client) FindItemsAdvanced(req FindItemsAdvancedRequest) (FindItemsAdvan
 
 	resp, err := f.doFindingServiceRequest([]byte(x), "findItemsAdvanced")
 	if err != nil {
-		return response, errors.New("error making findItemsAdvanced request: " + err.Error())
+		return response, fmt.Errorf("error making findItemsAdvanced request:  %w", err)
 	}
 
 	defer resp.Body.Close()
 	body, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
-		return response, errors.New("error reading findItemsAdvanced response: " + err.Error())
+		return response, fmt.Errorf("error reading findItemsAdvanced response:  %w", err)
 	}
 
 	err = xml.Unmarshal(body, &response)
 	if err != nil {
-		return response, errors.New(fmt.Sprintf("error deserializing response: %v, %s", err, string(body)))
+		return response, fmt.Errorf("error deserializing FindItemsAdvanced response: %w, %s", err, string(body))
 	}
 
 	return response, nil
@@ -78,18 +77,18 @@ func (f *Client) GetHistograms(req GetHistogramsRequest) (GetHistogramsResponse,
 
 	resp, err := f.doFindingServiceRequest([]byte(x), "getHistograms")
 	if err != nil {
-		return response, errors.New("error making getHistograms request: " + err.Error())
+		return response, fmt.Errorf("error making getHistograms request: %w", err)
 	}
 
 	defer resp.Body.Close()
 	body, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
-		return response, errors.New("error reading getHistograms response: " + err.Error())
+		return response, fmt.Errorf("error reading getHistograms response:  %w", err)
 	}
 
 	err = xml.Unmarshal(body, &response)
 	if err != nil {
-		return response, errors.New(fmt.Sprintf("error deserializing response: %v, %s", err, string(body)))
+		return response, fmt.Errorf("error deserializing GetHistograms response: %w, %s", err, string(body))
 	}
 
 	return response, nil
@@ -100,7 +99,7 @@ func (f *Client) doFindingServiceRequest(b []byte, callName string) (*http.Respo
 
 	request, err := http.NewRequest("POST", ServiceUrl, bytes.NewBuffer(b))
 	if err != nil {
-		return &response, errors.New("Error creating HTTP request: " + err.Error())
+		return &response, fmt.Errorf("Error creating HTTP request:  %w", err)
 	}
 
 	q := url.Values{}

@@ -138,12 +138,12 @@ func (a *ApplicationAuthenticator) fetchToken() (Token, error) {
 	defer resp.Body.Close()
 	body, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
-		return token, errors.New("error reading body from http response: " + err.Error())
+		return token, fmt.Errorf("error reading body from http response:  %w", err)
 	}
 
 	err = json.Unmarshal(body, &token)
 	if err != nil {
-		return token, errors.New("could not unmarshall body: " + err.Error())
+		return token, fmt.Errorf("could not unmarshall body:  %w", err)
 	}
 
 	return token, nil

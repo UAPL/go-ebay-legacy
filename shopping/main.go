@@ -3,7 +3,6 @@ package shopping
 import (
 	"bytes"
 	"encoding/xml"
-	"errors"
 	"fmt"
 	"github.com/uapl/go-ebay-legacy/auth"
 	"net/http"
@@ -52,13 +51,14 @@ func (s *Client) doRequest(req Request, aff AffiliateParams) (*http.Response, er
 	var err error
 	var q url.Values
 
+
 	switch RequestMethod {
 
 	case "POST":
 		q = url.Values{}
 		b, err = xml.Marshal(req)
 		if err != nil {
-			return nil, err
+			return nil, fmt.Errorf("error marshalling request (%s) to XML: %w", req.CallName(), err)
 		}
 
 		//fix the XML header and namespacing errors
@@ -73,7 +73,7 @@ func (s *Client) doRequest(req Request, aff AffiliateParams) (*http.Response, er
 
 	request, err := http.NewRequest(RequestMethod, ApiEndpoint, bytes.NewBuffer(b))
 	if err != nil {
-		return &response, errors.New("Error creating HTTP request: " + err.Error())
+		return &response, fmt.Errorf("Error creating HTTP request:  %w", err)
 	}
 
 	if err = s.prepareRequestHeaders(request); err != nil {
