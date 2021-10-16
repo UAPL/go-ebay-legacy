@@ -50,12 +50,13 @@ type Pagination struct {
 }
 
 type Error struct {
-	ErrorId   string `xml:"errorId,omitempty"`
-	Domain    string `xml:"domain,omitempty"`
-	Severity  string `xml:"severity,omitempty"`
-	Category  string `xml:"category,omitempty"`
-	Message   string `xml:"message,omitempty"`
-	SubDomain string `xml:"subdomain,omitempty"`
+	ErrorId   string   `xml:"errorId,omitempty"`
+	Domain    string   `xml:"domain,omitempty"`
+	Severity  string   `xml:"severity,omitempty"`
+	Category  string   `xml:"category,omitempty"`
+	Message   string   `xml:"message,omitempty"`
+	SubDomain string   `xml:"subdomain,omitempty"`
+	Parameter []string `xml:"parameter,omitempty"`
 }
 
 type BaseRequest struct {
