@@ -95,6 +95,28 @@ type FindItemsAdvancedResponse struct {
 	ConditionHistogram []ConditionHistogram `xml:"conditionHistogramContainer>conditionHistogram"`
 }
 
+type FindItemsByCategoryRequest struct {
+	*BaseRequest
+
+	XMLName         xml.Name            `xml:"http://www.ebay.com/marketplace/search/v1/services findItemsByCategoryRequest"`
+	ItemFilters     []ItemFilterInput   `xml:"itemFilter,omitempty"`
+	AspectFilters   []AspectFilterInput `xml:"aspectFilter,omitempty"`
+	Keywords        string              `xml:"keywords,omitempty"`
+	CategoryId      int                 `xml:"categoryId,omitempty"`
+	BuyerPostalCode string              `xml:"buyerPostalCode,omitempty"`
+	OutputSelectors []string            `xml:"outputSelector,omitempty"`
+}
+
+type FindItemsByCategoryResponse struct {
+	*BaseResponse
+
+	XMLName            xml.Name             `xml:"findItemsAdvancedResponse" json:"ignore"`
+	Items              []Item               `xml:"searchResult>item"`
+	Aspects            []Aspect             `xml:"aspectHistogramContainer>aspect"`
+	CategoryHistogram  []CategoryHistogram  `xml:"categoryHistogramContainer>categoryHistogram"`
+	ConditionHistogram []ConditionHistogram `xml:"conditionHistogramContainer>conditionHistogram"`
+}
+
 type FindItemsByKeywordResponse struct {
 	*BaseResponse
 	XMLName xml.Name `xml:"findItemsByKeywordsResponse" json:"ignore"`

@@ -27,3 +27,4 @@ _testmain.go
 *.ipr
 *.iml
 .DS_Store
+coverage.out

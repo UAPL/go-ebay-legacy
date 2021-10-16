@@ -65,6 +65,35 @@ func (f *Client) FindItemsAdvanced(req FindItemsAdvancedRequest) (FindItemsAdvan
 	return response, nil
 }
 
+func (f *Client) FindItemsByCategory(req FindItemsByCategoryRequest) (FindItemsByCategoryResponse, error) {
+	var response FindItemsByCategoryResponse
+
+	b, err := xml.Marshal(req)
+	if err != nil {
+		return response, err
+	}
+
+	x := xml.Header + string(b)
+
+	resp, err := f.doFindingServiceRequest([]byte(x), "findItemsByCategory")
+	if err != nil {
+		return response, fmt.Errorf("error making findItemsByCategory request:  %w", err)
+	}
+
+	defer resp.Body.Close()
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return response, fmt.Errorf("error reading findItemsByCategory response:  %w", err)
+	}
+
+	err = xml.Unmarshal(body, &response)
+	if err != nil {
+		return response, fmt.Errorf("error deserializing findItemsByCategory response: %w, %s", err, string(body))
+	}
+
+	return response, nil
+}
+
 func (f *Client) GetHistograms(req GetHistogramsRequest) (GetHistogramsResponse, error) {
 	var response GetHistogramsResponse
 
