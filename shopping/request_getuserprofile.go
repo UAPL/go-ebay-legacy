@@ -2,7 +2,7 @@ package shopping
 
 import (
 	"encoding/xml"
-	"errors"
+	"fmt"
 	"io/ioutil"
 	"net/http"
 	"net/url"
@@ -43,18 +43,18 @@ func (s *Client) GetUserProfile(req GetUserProfileRequest, aff AffiliateParams) 
 
 	httpResp, err := s.doRequest(req, aff)
 	if err != nil {
-		return resp, errors.New("error making GetUserProfile request: " + err.Error())
+		return resp, fmt.Errorf("error making GetUserProfile request:  %w", err)
 	}
 	defer httpResp.Body.Close()
 	body, err := ioutil.ReadAll(httpResp.Body)
 
 	if err != nil {
-		return resp, errors.New("error reading GetUserProfile http response: " + err.Error())
+		return resp, fmt.Errorf("error reading GetUserProfile http response:  %w", err)
 	}
 
 	err = xml.Unmarshal(body, &resp)
 	if err != nil {
-		return resp, errors.New("error deserializing GetUserProfileResponse: " + err.Error())
+		return resp, fmt.Errorf("error deserializing GetUserProfileResponse:  %w", err)
 	}
 
 	return resp, nil

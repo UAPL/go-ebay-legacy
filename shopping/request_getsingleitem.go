@@ -2,7 +2,7 @@ package shopping
 
 import (
 	"encoding/xml"
-	"errors"
+	"fmt"
 	"io/ioutil"
 	"net/url"
 )
@@ -39,18 +39,18 @@ func (s *Client) GetSingleItem(req GetSingleItemRequest, aff AffiliateParams) (G
 
 	httpResp, err := s.doRequest(req, aff)
 	if err != nil {
-		return resp, errors.New("error making GetMultipleItems request: " + err.Error())
+		return resp, fmt.Errorf("error making GetMultipleItems request:  %w", err)
 	}
 
 	defer httpResp.Body.Close()
 	body, err := ioutil.ReadAll(httpResp.Body)
 	if err != nil {
-		return resp, errors.New("error reading GetSingleItemResponse: " + err.Error())
+		return resp, fmt.Errorf("error reading GetSingleItemResponse:  %w", err)
 	}
 
 	err = xml.Unmarshal(body, &resp)
 	if err != nil {
-		return resp, errors.New("error deserializing response: " + err.Error())
+		return resp, fmt.Errorf("error deserializing response: %w", err)
 	}
 
 	return resp, nil

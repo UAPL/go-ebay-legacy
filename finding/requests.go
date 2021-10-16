@@ -50,12 +50,13 @@ type Pagination struct {
 }
 
 type Error struct {
-	ErrorId   string `xml:"errorId,omitempty"`
-	Domain    string `xml:"domain,omitempty"`
-	Severity  string `xml:"severity,omitempty"`
-	Category  string `xml:"category,omitempty"`
-	Message   string `xml:"message,omitempty"`
-	SubDomain string `xml:"subdomain,omitempty"`
+	ErrorId   string   `xml:"errorId,omitempty"`
+	Domain    string   `xml:"domain,omitempty"`
+	Severity  string   `xml:"severity,omitempty"`
+	Category  string   `xml:"category,omitempty"`
+	Message   string   `xml:"message,omitempty"`
+	SubDomain string   `xml:"subdomain,omitempty"`
+	Parameter []string `xml:"parameter,omitempty"`
 }
 
 type BaseRequest struct {
@@ -89,6 +90,28 @@ type FindItemsAdvancedResponse struct {
 	*BaseResponse
 
 	XMLName            xml.Name             `xml:"findItemsAdvancedResponse" json:"ignore"`
+	Items              []Item               `xml:"searchResult>item"`
+	Aspects            []Aspect             `xml:"aspectHistogramContainer>aspect"`
+	CategoryHistogram  []CategoryHistogram  `xml:"categoryHistogramContainer>categoryHistogram"`
+	ConditionHistogram []ConditionHistogram `xml:"conditionHistogramContainer>conditionHistogram"`
+}
+
+type FindItemsByCategoryRequest struct {
+	*BaseRequest
+
+	XMLName         xml.Name            `xml:"http://www.ebay.com/marketplace/search/v1/services findItemsByCategoryRequest"`
+	ItemFilters     []ItemFilterInput   `xml:"itemFilter,omitempty"`
+	AspectFilters   []AspectFilterInput `xml:"aspectFilter,omitempty"`
+	Keywords        string              `xml:"keywords,omitempty"`
+	CategoryId      int                 `xml:"categoryId,omitempty"`
+	BuyerPostalCode string              `xml:"buyerPostalCode,omitempty"`
+	OutputSelectors []string            `xml:"outputSelector,omitempty"`
+}
+
+type FindItemsByCategoryResponse struct {
+	*BaseResponse
+
+	XMLName            xml.Name             `xml:"findItemsByCategoryResponse" json:"ignore"`
 	Items              []Item               `xml:"searchResult>item"`
 	Aspects            []Aspect             `xml:"aspectHistogramContainer>aspect"`
 	CategoryHistogram  []CategoryHistogram  `xml:"categoryHistogramContainer>categoryHistogram"`
