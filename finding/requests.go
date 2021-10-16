@@ -110,7 +110,7 @@ type FindItemsByCategoryRequest struct {
 type FindItemsByCategoryResponse struct {
 	*BaseResponse
 
-	XMLName            xml.Name             `xml:"findItemsAdvancedResponse" json:"ignore"`
+	XMLName            xml.Name             `xml:"findItemsByCategoryResponse" json:"ignore"`
 	Items              []Item               `xml:"searchResult>item"`
 	Aspects            []Aspect             `xml:"aspectHistogramContainer>aspect"`
 	CategoryHistogram  []CategoryHistogram  `xml:"categoryHistogramContainer>categoryHistogram"`
