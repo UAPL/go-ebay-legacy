@@ -11,6 +11,7 @@ import (
 
 var (
 	ServiceUrl = "https://svcs.ebay.com/services/search/FindingService/v1"
+	DefaultGlobalId = "EBAY-US"
 )
 
 type Api interface {
@@ -21,6 +22,7 @@ type Api interface {
 type Client struct {
 	applicationId string
 	httpClient    *http.Client
+	GlobalId string
 }
 
 var _ Api = &Client{}
@@ -137,7 +139,12 @@ func (f *Client) doFindingServiceRequest(b []byte, callName string) (*http.Respo
 	q.Add("OPERATION-NAME", callName)
 	q.Add("SECURITY-APPNAME", f.applicationId)
 	q.Add("RESPONSE-DATA-FORMAT", "xml")
-	q.Add("GLOBAL-ID", "EBAY-US")
+
+	if f.GlobalId != "" {
+		q.Add("GLOBAL-ID", f.GlobalId)
+	} else {
+		q.Add("GLOBAL-ID", DefaultGlobalId)
+	}
 
 	request.URL.RawQuery = q.Encode()
 
